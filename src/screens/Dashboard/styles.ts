@@ -5,6 +5,7 @@ import { getBottomSpace, getStatusBarHeight } from "react-native-iphone-x-helper
 import { RFPercentage, RFValue } from 'react-native-responsive-fontsize'
 
 import { DataListProps } from '.'
+import { BorderlessButton } from "react-native-gesture-handler";
 // Mesmo exemplo do aplicado abaixo
 // background-color: ${props => props.theme.colors.primary}
 
@@ -57,6 +58,8 @@ export const UserName = styled.Text`
   font-size: ${RFValue(18)}px;
   font-family: ${({ theme }) => theme.fonts.bold};
 `;
+
+export const LogoutButton = styled(BorderlessButton)``
 
 export const Icon = styled(Feather)`
   color: ${({ theme }) => theme.colors.secondary};
