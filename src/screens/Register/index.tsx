@@ -53,15 +53,13 @@ export const Register = () => {
     name: 'categoria',
   })
 
-  const dataKey = '@gofinances:transactions'
-
   const { navigate } = useNavigation()
 
   const { control, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: yupResolver(schema)
   })
 
-  const handleTransactionsTypeSelect = (type: 'up' | 'down') => {
+  const handleTransactionsTypeSelect = (type: 'positive' | 'negative') => {
     setTransactionType(type)
   }
 
@@ -84,12 +82,14 @@ export const Register = () => {
       id: String(uuid.v4()),
       name: form.name,
       amount: form.amount,
-      transactionType,
+      type: transactionType,
       category: category.key,
       date: new Date(),
     }
 
     try {
+      const dataKey = '@gofinances:transactions'
+
       const data = await AsyncStorage.getItem(dataKey)
       const currentData = data ? JSON.parse(data) : []
 
@@ -143,14 +143,14 @@ export const Register = () => {
               <TransactionTypeButton
                 type={'up'}
                 title={'Income'}
-                onPress={() => handleTransactionsTypeSelect('up')}
-                isActive={transactionType === 'up'}
+                onPress={() => handleTransactionsTypeSelect('positive')}
+                isActive={transactionType === 'positive'}
               />
               <TransactionTypeButton
                 type={'down'}
                 title={'Outcome'}
-                onPress={() => handleTransactionsTypeSelect('down')}
-                isActive={transactionType === 'down'}
+                onPress={() => handleTransactionsTypeSelect('negative')}
+                isActive={transactionType === 'negative'}
               />
             </TransactionsTypes>
             <CategorySelectButton title={category.name} onPress={handleOpenSelectCategoryModal} />
