@@ -1,17 +1,79 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
 import { HistoryCard } from '../../components/HistoryCard';
 
-import { StyledContainer, StyledHeader, StyledTitle } from './styles';
+import { StyledContainer, StyledHeader, StyledTitle, StyledContent } from './styles';
+import { categories } from '../../utils/categories';
+interface TransactionData {
+  type: 'positive' | 'negative'
+  name: string
+  amount: string
+  category: string
+  date: string
+}
+
+interface CategoryData {
+  key: string
+  name: string
+  total: string
+  color: string
+}
 
 export function Resume() {
+  const [totalByCategories, setTotalByCategories] = useState<CategoryData[]>([])
+
+  const loadData = async () => {
+    const dataKey = '@gofinances:transactions'
+    const response = await AsyncStorage.getItem(dataKey)
+    const responseFormatted = response ? JSON.parse(response) : []
+
+    const expensives = responseFormatted.filter((expensive: TransactionData) => expensive.type === 'negative')
+
+    const totalByCategory: CategoryData[] = []
+
+    categories.forEach(category => {
+      let categorySum = 0
+
+      expensives.forEach((expensive: TransactionData) => {
+        if (expensive.category === category.key) {
+          categorySum += Number(expensive.amount)
+        }
+      })
+
+      if (categorySum > 0) {
+        const total = categorySum.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        })
+
+        // ADICIONANDO COM PUSH NO ARRAY
+        totalByCategory.push({
+          key: category.key,
+          name: category.name,
+          color: category.color,
+          total,
+        })
+      }
+    })
+
+    setTotalByCategories(totalByCategory)
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
   return (
     <StyledContainer>
       <StyledHeader>
         <StyledTitle>Resumo por categoria</StyledTitle>
       </StyledHeader>
-
-      <HistoryCard title={'Title'} amount={'R$ 150,00'} color={'red'} />
-
+      <StyledContent>
+        {totalByCategories.map(item => (
+          <HistoryCard key={item.key} title={item.name} amount={item.total} color={item.color} />
+        ))}
+      </StyledContent>
     </StyledContainer>
   );
 }
