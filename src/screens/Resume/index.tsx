@@ -6,13 +6,18 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import { HistoryCard } from '../../components/HistoryCard';
 
 import { useTheme } from 'styled-components';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 import {
   StyledContainer,
   StyledHeader,
   StyledTitle,
   StyledContent,
-  StyledChartContainer
+  StyledChartContainer,
+  Month,
+  MonthSelect,
+  MonthSelectButton,
+  MonthSelectIcon,
 } from './styles';
 import { categories } from '../../utils/categories';
 interface TransactionData {
@@ -93,7 +98,26 @@ export function Resume() {
       <StyledHeader>
         <StyledTitle>Resumo por categoria</StyledTitle>
       </StyledHeader>
-      <StyledContent>
+      <StyledContent
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: 24,
+          paddingBottom: useBottomTabBarHeight()
+        }}
+      >
+
+        <MonthSelect>
+          <MonthSelectButton>
+            <MonthSelectIcon name={'chevron-left'} />
+          </MonthSelectButton>
+
+          <Month>Abril</Month>
+
+          <MonthSelectButton>
+            <MonthSelectIcon name={'chevron-right'} />
+          </MonthSelectButton>
+        </MonthSelect>
+
         <StyledChartContainer>
           <VictoryPie
             data={totalByCategories}
