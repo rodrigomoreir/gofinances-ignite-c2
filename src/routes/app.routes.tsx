@@ -14,6 +14,9 @@ export const AppRoutes = () => {
   const theme = useTheme()
   return (
     <Navigator
+      screenOptions={{
+        headerShown: false
+      }}
       tabBarOptions={{
         activeTintColor: theme.colors.secondary,
         inactiveTintColor: theme.colors.text,
@@ -21,7 +24,7 @@ export const AppRoutes = () => {
         style: {
           paddingVertical: Platform.OS === 'ios' ? 20 : 0,
           height: 77
-        }
+        },
       }}
     >
       <Screen

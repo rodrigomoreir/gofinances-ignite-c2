@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { ActivityIndicator } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native'
+import { useAuth } from '../../hooks/auth'
 
 import { HighlightCard } from '../../components/HiglightCard'
 import { TransactionCard, TransactionCardProps } from '../../components/TransactionCard'
@@ -46,6 +47,7 @@ export const Dashboard = () => {
   const [highlightData, setHighlightData] = useState<HighlightDataProps>({} as HighlightDataProps)
 
   const theme = useTheme()
+  const { signOut, user } = useAuth()
 
   const getLastTransactionDate = (
     collection: DataListProps[],
@@ -149,13 +151,13 @@ export const Dashboard = () => {
           <StyledHeader>
             <UserWrapper>
               <UserInfo>
-                <Photo source={{ uri: 'https://github.com/rodrigomoreir.png' }} />
+                <Photo source={{ uri: user.photo }} />
                 <User>
                   <UserGreeting>Olá,</UserGreeting>
-                  <UserName>Rodrigo</UserName>
+                  <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
-              <LogoutButton onPress={() => { }}>
+              <LogoutButton onPress={signOut}>
                 <Icon name={'power'} />
               </LogoutButton>
             </UserWrapper>

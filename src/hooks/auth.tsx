@@ -29,8 +29,10 @@ interface User {
 
 interface IAuthContextData {
   user: User
+  userStorageLoading: boolean
   signInWithGoogle(): Promise<void>
-  singInWithApple(): Promise<void>
+  signInWithApple(): Promise<void>
+  signOut(): Promise<void>
 }
 
 interface AuthorizationResponse {
@@ -77,7 +79,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   }
 
-  const singInWithApple = async () => {
+  const signInWithApple = async () => {
     try {
       const credential = await AppleAuthentication.signInAsync({
         requestedScopes: [
@@ -87,11 +89,14 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       })
 
       if (credential) {
+        const name = credential.fullName!.givenName!;
+        const photo = `https://ui-avatars.com/api/?name=${name}&length=1`
+
         const userLogged = {
           id: String(credential.user),
           email: credential.email!,
-          name: credential.fullName!.givenName!,
-          photo: undefined
+          name,
+          photo
         }
         setUser(userLogged)
         await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged))
@@ -100,6 +105,11 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     } catch (error) {
       throw new Error(error)
     }
+  }
+
+  const signOut = async () => {
+    setUser({} as User)
+    await AsyncStorage.removeItem(userStorageKey)
   }
 
   useEffect(() => {
@@ -117,7 +127,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
   return (
     // Valor atual do contexto
-    <AuthContext.Provider value={{ user, signInWithGoogle, singInWithApple }}>
+    <AuthContext.Provider value={{ user, userStorageLoading, signInWithGoogle, signInWithApple, signOut }}>
       {children}
     </AuthContext.Provider>
   )
