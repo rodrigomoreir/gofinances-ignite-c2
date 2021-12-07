@@ -11,6 +11,7 @@ import { HistoryCard } from '../../components/HistoryCard';
 import { useTheme } from 'styled-components';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useFocusEffect } from '@react-navigation/core';
+import { useAuth } from '../../hooks/auth';
 
 import {
   StyledContainer,
@@ -47,6 +48,8 @@ export function Resume() {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [totalByCategories, setTotalByCategories] = useState<CategoryData[]>([])
 
+  const { user } = useAuth()
+
   const theme = useTheme()
 
   const handleDateChange = (action: 'next' | 'previous') => {
@@ -61,7 +64,7 @@ export function Resume() {
 
   const loadData = async () => {
     setIsLoading(true)
-    const dataKey = '@gofinances:transactions'
+    const dataKey = `@gofinances:transactions_user:${user.id}`
     const response = await AsyncStorage.getItem(dataKey)
     const responseFormatted = response ? JSON.parse(response) : []
 
